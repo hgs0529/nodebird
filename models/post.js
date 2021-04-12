@@ -1,0 +1,30 @@
+const Sequelize = require('sequelize');
+
+module.exports = class Post extends Sequelize.Model {
+    static init(sequelize) {
+        return super.init({
+            content: {
+                type: Sequelize.STRING(1000),
+                allowNull: false,
+            },
+            img: {
+                type: Sequelize.STRING(200),
+                allowNull: true,
+            },
+        }, {
+            sequelize,
+            timestamps: true,
+            paranoid: true,
+            modelName: 'Post',
+            tableName: 'posts',
+            charset: 'utf8mb4',
+            collate: 'utf8mb4_general_ci',
+        })
+    }
+
+    static associate(db) {
+        db.Post.belongsTo(db.User);
+        db.Post.belongsToMany(db.Hashtag, { through: 'PostHashtag' });
+        db.Post.belongsToMany(db.User, { through: 'Like', as: 'Liker' })
+    }
+}
